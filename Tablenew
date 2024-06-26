@@ -1,0 +1,183 @@
+To create a table with pagination in React, you can use a library like `react-table` which provides flexible table components. Below is an example of how you might set up a table with pagination using `react-table`.
+
+First, ensure you have `react-table` installed:
+
+```bash
+npm install react-table
+```
+
+Here’s a basic example of a paginated table component:
+
+```jsx
+import React, { useMemo } from 'react';
+import { useTable, usePagination } from 'react-table';
+
+const PaginatedTable = ({ data }) => {
+  const columns = useMemo(
+    () => [
+      {
+        Header: 'IP',
+        accessor: 'ip',
+      },
+      {
+        Header: 'Site Name',
+        accessor: 'siteName',
+      },
+      {
+        Header: 'Location ID',
+        accessor: 'locationId',
+      },
+      {
+        Header: 'Device Type',
+        accessor: 'deviceType',
+      },
+      {
+        Header: 'Expires In',
+        accessor: 'expiresIn',
+      },
+      {
+        Header: 'Installation Status',
+        accessor: 'installationStatus',
+      },
+    ],
+    []
+  );
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    page,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
+  } = useTable(
+    {
+      columns,
+      data,
+      initialState: { pageIndex: 0 }, // Pass our hoisted table state
+    },
+    usePagination
+  );
+
+  return (
+    <>
+      <table {...getTableProps()}>
+        <thead>
+          {headerGroups.map(headerGroup => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {page.map((row, i) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map(cell => (
+                  <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <div className="pagination">
+        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+          {'<<'}
+        </button>{' '}
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          {'<'}
+        </button>{' '}
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+          {'>'}
+        </button>{' '}
+        <button onClick={() => gotoPage(pageOptions.length - 1)} disabled={!canNextPage}>
+          {'>>'}
+        </button>{' '}
+        <span>
+          Page{' '}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>{' '}
+        </span>
+        <span>
+          | Go to page:{' '}
+          <input
+            type="number"
+            defaultValue={pageIndex + 1}
+            onChange={e => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0;
+              gotoPage(page);
+            }}
+            style={{ width: '100px' }}
+          />
+        </span>{' '}
+        <select
+          value={pageSize}
+          onChange={e => {
+            setPageSize(Number(e.target.value));
+          }}
+        >
+          {[10, 20, 30, 40, 50].map(pageSize => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
+    </>
+  );
+};
+
+export default PaginatedTable;
+```
+
+To use this component, you can import and render it in your main component, passing in the data you want to display:
+
+```jsx
+import React from 'react';
+import PaginatedTable from './PaginatedTable';
+
+const App = () => {
+  const data = [
+    {
+      ip: '89.99.246.130',
+      siteName: '1st & Market',
+      locationId: '125818',
+      deviceType: 'Alarm Panel',
+      expiresIn: 67,
+      installationStatus: 'Pending',
+    },
+    {
+      ip: '89.221.161.170',
+      siteName: '33rd St Station',
+      locationId: '361628',
+      deviceType: 'Alarm Panel',
+      expiresIn: 25,
+      installationStatus: 'Pending',
+    },
+    // Add the rest of the data entries here
+  ];
+
+  return (
+    <div>
+      <h1>Certificate Management</h1>
+      <PaginatedTable data={data} />
+    </div>
+  );
+};
+
+export default App;
+```
+
+This code will display a table with the provided data and include pagination controls to navigate through the pages of data. Adjust the `data` array to include all your rows, and you’ll have a complete paginated table.

@@ -1,0 +1,31 @@
+import React, { useRef } from 'react';
+
+const FileUploadButton = () => {
+  const fileInputRef = useRef(null);
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      console.log('Selected file:', file);
+      // You can handle the selected file here, e.g., upload it to a server
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={handleButtonClick}>Select File</button>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        style={{ display: 'none' }}
+      />
+    </div>
+  );
+};
+
+export default FileUploadButton;

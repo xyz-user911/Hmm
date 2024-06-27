@@ -1,0 +1,100 @@
+import React, { useState } from 'react';
+import './Sidebar.css';
+
+const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [activePage, setActivePage] = useState(null);
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handlePageClick = (page) => {
+    setActivePage(page);
+    // Handle navigation logic here
+    console.log(`Navigating to ${page}`);
+  };
+
+  const pages = [
+    { name: 'Certificate Management', icon: '📜' },
+    { name: 'Asset Management', icon: '💼' },
+    { name: 'Risk and Governance', icon: '⚖️' },
+    { name: 'Logs Management', icon: '📚' },
+    { name: 'Admin Configuration', icon: '⚙️' }
+  ];
+
+  return (
+    <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
+      <div className="menu" onClick={toggleSidebar}>
+        Menu
+      </div>
+      <ul>
+        {pages.map((page) => (
+          <li
+            key={page.name}
+            className={activePage === page.name ? 'active' : ''}
+            onClick={() => handlePageClick(page.name)}
+          >
+            <span className="icon">{page.icon}</span>
+            {isOpen && <span className="page-name">{page.name}</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default Sidebar;
+
+
+
+
+css part
+
+.sidebar {
+  width: 60px;
+  background-color: lightgrey;
+  transition: width 0.3s;
+  overflow-x: hidden;
+}
+
+.sidebar.open {
+  width: 200px;
+}
+
+.sidebar .menu {
+  padding: 10px;
+  cursor: pointer;
+  background-color: darkgrey;
+  text-align: center;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.sidebar ul li.active,
+.sidebar ul li:hover {
+  background-color: grey;
+}
+
+.sidebar ul li .icon {
+  font-size: 20px;
+}
+
+.sidebar ul li .page-name {
+  margin-left: 10px;
+}
+
+
+
+

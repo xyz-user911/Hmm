@@ -1,0 +1,70 @@
+import React, { useState } from 'react';
+
+const DragAndDropFileUpload = () => {
+  const [dragging, setDragging] = useState(false);
+  const [file, setFile] = useState(null);
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setFile(e.dataTransfer.files[0]);
+      e.dataTransfer.clearData();
+    }
+  };
+
+  const handleFileSelect = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  return (
+    <div
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      style={{
+        border: dragging ? '2px dashed #000' : '2px solid #ccc',
+        padding: '20px',
+        width: '300px',
+        height: '200px',
+        textAlign: 'center',
+        lineHeight: '160px',
+        margin: '20px auto',
+      }}
+    >
+      {file ? (
+        <p>{file.name}</p>
+      ) : (
+        <p>Drag & drop a file here, or click to select a file</p>
+      )}
+      <input
+        type="file"
+        style={{ display: 'none' }}
+        onChange={handleFileSelect}
+        ref={(input) => input && input.addEventListener('click', (e) => e.stopPropagation())}
+      />
+    </div>
+  );
+};
+
+export default DragAndDropFileUpload;
